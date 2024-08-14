@@ -14,10 +14,7 @@ const generatePDFBuffer = async (form) => {
         });
     
         // Add the custom Arabic font
-        const arabicFontPath = path.join(__dirname, '..', 'public', 'Amiri', 'Amiri-Regular.ttf');
-        doc.registerFont('arabicFont', arabicFontPath);
-        
-        doc.font('arabicFont');
+       
     
         const pageWidth = doc.page.width;
         const pageHeight = doc.page.height;
@@ -104,7 +101,7 @@ const generatePDFBuffer = async (form) => {
             doc.lineWidth(borderThickness);
             doc.rect(margin, margin, pageWidth1 - 2 * margin, pageHeight1 - 2 * margin).stroke();
     
-            const imagePath1 =  path.join(__dirname, '../public/img1.png');
+            const imagePath1 =  path.join(__dirname, '../public/img.png');
             const imageHeight1 = 100;
             // Adjust for margins and reduce left/right width by setting a specific value
             const leftRightReduction1 = 4; // Adjust this value to reduce the left and right margins
