@@ -41,9 +41,7 @@ const generatePDFBuffer = async (form) => {
          
 
             // Construct the path to the image
-            const imagePath = path.join(__dirname, '../public/img1.png');
-
-            console.log('Image Path:', imagePath);
+         
             const imageHeight = 110;
 
             // Adjust for margins and reduce left/right width by setting a specific value
@@ -78,7 +76,7 @@ const generatePDFBuffer = async (form) => {
     
             // Calculate position for the new image
             doc.moveDown(2); // Space after the text
-            const imagePathBelowText = path.join(__dirname, '../public/img2.png'); // Path to the new image
+        // Path to the new image
             const imageBelowTextWidth = pageWidth - 2 * (margin + 20); // Keep your current width calculation
             const imageBelowTextHeight = 230; // Adjust the height as needed
 
@@ -87,7 +85,7 @@ const generatePDFBuffer = async (form) => {
             const xPosition = margin + leftMarginReduction; // Calculate new X position for the image
 
             // Add the image below the text
-            doc.image(imagePathBelowText, xPosition, doc.y, { width: imageBelowTextWidth, height: imageBelowTextHeight });
+            //doc.image(imagePathBelowText, xPosition, doc.y, { width: imageBelowTextWidth, height: imageBelowTextHeight });
 
             // Move down to avoid overlap with the image
             doc.moveDown(2);
@@ -101,7 +99,7 @@ const generatePDFBuffer = async (form) => {
             doc.lineWidth(borderThickness);
             doc.rect(margin, margin, pageWidth1 - 2 * margin, pageHeight1 - 2 * margin).stroke();
     
-            const imagePath1 =  path.join(__dirname, '../public/img.png');
+            
             const imageHeight1 = 100;
             // Adjust for margins and reduce left/right width by setting a specific value
             const leftRightReduction1 = 4; // Adjust this value to reduce the left and right margins
@@ -111,9 +109,9 @@ const generatePDFBuffer = async (form) => {
             const xPosition1 = margin + leftRightReduction1 / 2; // Center the image by adjusting both sides
             
             // Draw the image
-            doc.image(imagePath1, xPosition1, margin + borderThickness, { width: imageWidth1, height: imageHeight1 });
+            //doc.image(imagePath1, xPosition1, margin + borderThickness, { width: imageWidth1, height: imageHeight1 });
             // Adjust Y position to avoid border
-            doc.image(url, qrX, qrY + borderThickness, { width: qrWidth, height: qrHeight });
+            //doc.image(url, qrX, qrY + borderThickness, { width: qrWidth, height: qrHeight });
 
             doc.moveDown(6);
     
