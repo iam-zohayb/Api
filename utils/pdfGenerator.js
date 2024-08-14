@@ -1,7 +1,7 @@
 const QRCode = require('qrcode'); 
 const PDFDocument = require('pdfkit');
 const fs = require('fs'); 
-
+const path = require('path');
 const generatePDFBuffer = async (form) => {
     return new Promise((resolve, reject) => {
         const doc = new PDFDocument({ margin: 0 }); 
@@ -14,10 +14,11 @@ const generatePDFBuffer = async (form) => {
         });
     
         // Add the custom Arabic font
-        doc.registerFont('arabicFont', '/Users/zohaibgondal/Desktop/test/Amiri/Amiri-Regular.ttf');
+        const arabicFontPath = path.join(__dirname, '..', 'public', 'Amiri', 'Amiri-Regular.ttf');
+        doc.registerFont('arabicFont', arabicFontPath);
+        
         doc.font('arabicFont');
     
-        
         const pageWidth = doc.page.width;
         const pageHeight = doc.page.height;
         const margin = 40; // Margin for the border
@@ -40,7 +41,12 @@ const generatePDFBuffer = async (form) => {
             const number = 4031295038;
 
             // Add an image at the top of the PDF
-            const imagePath = '/Users/zohaibgondal/Desktop/test/public/img1.png';
+         
+
+            // Construct the path to the image
+            const imagePath = path.join(__dirname, '../public/img1.png');
+
+            console.log('Image Path:', imagePath);
             const imageHeight = 110;
 
             // Adjust for margins and reduce left/right width by setting a specific value
@@ -75,7 +81,7 @@ const generatePDFBuffer = async (form) => {
     
             // Calculate position for the new image
             doc.moveDown(2); // Space after the text
-            const imagePathBelowText = '/Users/zohaibgondal/Desktop/test/public/img2.png'; // Path to the new image
+            const imagePathBelowText = path.join(__dirname, '../public/img2.png'); // Path to the new image
             const imageBelowTextWidth = pageWidth - 2 * (margin + 20); // Keep your current width calculation
             const imageBelowTextHeight = 230; // Adjust the height as needed
 
@@ -98,7 +104,7 @@ const generatePDFBuffer = async (form) => {
             doc.lineWidth(borderThickness);
             doc.rect(margin, margin, pageWidth1 - 2 * margin, pageHeight1 - 2 * margin).stroke();
     
-            const imagePath1 = '/Users/zohaibgondal/Desktop/test/public/img.png';
+            const imagePath1 =  path.join(__dirname, '../public/img1.png');
             const imageHeight1 = 100;
             // Adjust for margins and reduce left/right width by setting a specific value
             const leftRightReduction1 = 4; // Adjust this value to reduce the left and right margins
