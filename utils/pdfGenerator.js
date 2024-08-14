@@ -14,7 +14,7 @@ const generatePDFBuffer = async (form) => {
         });
     
         // Add the custom Arabic font
-        doc.registerFont('arabicFont', '/Users/zohaibgondal/Desktop/project1/Amiri/Amiri-Regular.ttf');
+        doc.registerFont('arabicFont', '/Users/zohaibgondal/Desktop/test/Amiri/Amiri-Regular.ttf');
         doc.font('arabicFont');
     
         const pageWidth = doc.page.width;
@@ -39,7 +39,7 @@ const generatePDFBuffer = async (form) => {
             const number = 4031295038;
 
             // Add an image at the top of the PDF
-            const imagePath = '/Users/zohaibgondal/Desktop/project1/Backend/public/img1.png';
+            const imagePath = '/Users/zohaibgondal/Desktop/test/public/img1.png';
             const imageHeight = 110;
 
             // Adjust for margins and reduce left/right width by setting a specific value
@@ -74,7 +74,7 @@ const generatePDFBuffer = async (form) => {
     
             // Calculate position for the new image
             doc.moveDown(2); // Space after the text
-            const imagePathBelowText = '/Users/zohaibgondal/Desktop/project1/Backend/public/img2.png'; // Path to the new image
+            const imagePathBelowText = '/Users/zohaibgondal/Desktop/test/public/img2.png'; // Path to the new image
             const imageBelowTextWidth = pageWidth - 2 * (margin + 20); // Keep your current width calculation
             const imageBelowTextHeight = 230; // Adjust the height as needed
 
@@ -97,7 +97,7 @@ const generatePDFBuffer = async (form) => {
             doc.lineWidth(borderThickness);
             doc.rect(margin, margin, pageWidth1 - 2 * margin, pageHeight1 - 2 * margin).stroke();
     
-            const imagePath1 = '/Users/zohaibgondal/Desktop/project1/Backend/public/img.png';
+            const imagePath1 = '/Users/zohaibgondal/Desktop/test/public/img.png';
             const imageHeight1 = 100;
             // Adjust for margins and reduce left/right width by setting a specific value
             const leftRightReduction1 = 4; // Adjust this value to reduce the left and right margins
