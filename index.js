@@ -1,5 +1,5 @@
 
-// Backend/Server.js
+// Backend/index.js
 
 const express = require('express');
 const mongoose = require('mongoose');
@@ -26,4 +26,3 @@ app.use('/api/drivers', driverRoutes);
 app.use('/api', authRoutes);
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-module.exports = app;
