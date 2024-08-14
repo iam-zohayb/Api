@@ -17,6 +17,7 @@ const generatePDFBuffer = async (form) => {
         doc.registerFont('arabicFont', '/Users/zohaibgondal/Desktop/test/Amiri/Amiri-Regular.ttf');
         doc.font('arabicFont');
     
+        
         const pageWidth = doc.page.width;
         const pageHeight = doc.page.height;
         const margin = 40; // Margin for the border
