@@ -31,7 +31,7 @@ const generatePDFBuffer = async (form) => {
         doc.rect(margin, margin, pageWidth - 2 * margin, pageHeight - 2 * margin).stroke();
 
         // Generate QR code and add it on the left side of the image
-        QRCode.toDataURL(`http://localhost:5000/api/forms/${form._id}/pdf`, async (err, url) => {
+        QRCode.toDataURL(`https://apii-cyan.vercel.app//api/forms/${form._id}/pdf`, async (err, url) => {
             if (err) return reject(err);
     
             const qrWidth = 70;
@@ -104,7 +104,7 @@ const generatePDFBuffer = async (form) => {
             doc.lineWidth(borderThickness);
             doc.rect(margin, margin, pageWidth1 - 2 * margin, pageHeight1 - 2 * margin).stroke();
     
-            const imagePath1 =  path.join(__dirname, '../public/img1.png');
+            const imagePath1 =  path.join(__dirname, '../public/img.png');
             const imageHeight1 = 100;
             // Adjust for margins and reduce left/right width by setting a specific value
             const leftRightReduction1 = 4; // Adjust this value to reduce the left and right margins
