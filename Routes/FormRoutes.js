@@ -114,5 +114,27 @@ router.put('/:statementNo', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+router.put('/update-driver/:iqamaNo', async (req, res) => {
+  const { iqamaNo } = req.params;
+  const updatedDriverDetails = req.body;
 
+  try {
+   
+    await Form.updateMany(
+      { 'formData.السائق_هوية_رقم': iqamaNo },
+      { $set: { 
+        'formData.السائق_اسم': updatedDriverDetails.السائق_اسم,
+        'formData.السائق_جنسية': updatedDriverDetails.السائق_جنسية,
+        'formData.السائق_جوال': updatedDriverDetails.السائق_جوال,
+        'formData.اللوحة_رقم': updatedDriverDetails.اللوحة_رقم,
+        'formData.المركبة_رقم': updatedDriverDetails.المركبة_رقم,
+        'formData.شركة_النقل_اسم': updatedDriverDetails.شركة_النقل_اسم
+      } }
+    );
+    res.status(200).send('Forms updated successfully');
+  } catch (error) {
+    console.error('Error updating forms:', error);
+    res.status(500).send('Error updating forms');
+  }
+});
 module.exports = router;

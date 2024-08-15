@@ -104,7 +104,7 @@ const generatePDFBuffer = async (form) => {
             doc.lineWidth(borderThickness);
             doc.rect(margin, margin, pageWidth1 - 2 * margin, pageHeight1 - 2 * margin).stroke();
     
-            const imagePath1 =  path.join(__dirname, '../public/img.png');
+            const imagePath1 =  path.join(__dirname, '../public/img1.png');
             const imageHeight1 = 100;
             // Adjust for margins and reduce left/right width by setting a specific value
             const leftRightReduction1 = 4; // Adjust this value to reduce the left and right margins
@@ -224,75 +224,84 @@ const generatePDFBuffer = async (form) => {
             
             doc.fontSize(12).text(driverTitle, driverTitleX, doc.y);
     
-            // Define a smaller column width for the driver table
-            const driverColumnWidth = (pageWidth1 - 2 * margin) / 7; // Adjusting for 7 columns
-            
-            const driverTable = {
-                headers: ['النقل شركة اسم ', 'المركبة رقم ', 'اللوحة رقم ', 'السائق هوية رقم ', 'السائق جوال ', 'السائق جنسية ', 'السائق اسم '],
-                rows: [
-                    [
-                        form.formData.شركة_النقل_اسم || '      ', 
-                        form.formData.المركبة_رقم || '       ',    
-                        form.formData.اللوحة_رقم || '        ',    
-                        form.formData.السائق_هوية_رقم || '        ', 
-                        form.formData.السائق_جوال || '        ',     
-                        form.formData.السائق_جنسية || '        ',    
-                        form.formData.السائق_اسم || '         '      
-                    ]
-                ],
-            };
-            
-            // Draw table headers for driver
-            let driverStartY = doc.y;
-            
-            // Draw top enclosing line for driver table
-            doc.moveTo(startX, driverStartY)
-                .lineTo(startX + driverTable.headers.length * driverColumnWidth, driverStartY)
-                .stroke();
-            
-            driverTable.headers.forEach((header, i) => {
-                doc.text(header, startX + i * driverColumnWidth, driverStartY, { width: driverColumnWidth, align: 'center' });
-            });
-            
-            driverStartY += 20; // Adjust for row height
-            driverTable.rows.forEach((row) => {
-                row.forEach((cell, i) => {
-                    doc.text(cell || '', startX + i * driverColumnWidth, driverStartY, { width: driverColumnWidth, align: 'center' });
-                });
-                driverStartY += 20; // Adjust for row height
-            
-                // Draw row lines for driver
-                doc.moveTo(startX, driverStartY - 20)
-                    .lineTo(startX + driverTable.headers.length * driverColumnWidth, driverStartY - 20)
-                    .stroke();
-            
-                // Draw an additional row line after each driver row
-                doc.moveTo(startX, driverStartY)
-                    .lineTo(startX + driverTable.headers.length * driverColumnWidth, driverStartY)
-                    .stroke();
-            });
-            
-            // Draw column lines for driver
-            driverTable.headers.forEach((header, i) => {
-                doc.moveTo(startX + i * driverColumnWidth, doc.y - (driverTable.rows.length * 20 + 20))
-                    .lineTo(startX + i * driverColumnWidth, driverStartY)
-                    .stroke();
-            });
-            
-            // Draw right border of the table for driver
-            doc.moveTo(startX + driverTable.headers.length * driverColumnWidth, doc.y - (driverTable.rows.length * 20 + 20))
-                .lineTo(startX + driverTable.headers.length * driverColumnWidth, driverStartY - 20)
-                .stroke();
-            
-            // Draw bottom border of the table for driver
-            doc.moveTo(startX, driverStartY - 20)
-                .lineTo(startX + driverTable.headers.length * driverColumnWidth, driverStartY - 20)
-                .stroke();
-            
-            // Draw bottom enclosing line for driver
-            doc.moveTo(startX, driverStartY - 20)
-                .lineTo(startX + driverTable.headers.length * driverColumnWidth, driverStartY - 20)
-                .stroke();
+       // Define a smaller column width for the driver table
+const driverColumnWidth = (pageWidth1 - 2 * margin) / 7; // Adjusting for 7 columns
+
+const driverTable = {
+    headers: ['النقل شركة اسم ', 'المركبة رقم ', 'اللوحة رقم ', 'السائق هوية رقم ', 'السائق جوال ', 'السائق جنسية ', 'السائق اسم '],
+    rows: [
+        [
+            form.formData.شركة_النقل_اسم || '      ', 
+            form.formData.المركبة_رقم || '       ',    
+            form.formData.اللوحة_رقم || '        ',    
+            form.formData.السائق_هوية_رقم || '        ', 
+            form.formData.السائق_جوال || '        ',     
+            form.formData.السائق_جنسية || '        ',    
+            form.formData.السائق_اسم || '         '      
+        ]
+    ],
+};
+
+// Draw table rows for driver
+let driverStartY = doc.y;
+
+// Draw top enclosing line for driver table
+doc.moveTo(startX, driverStartY)
+    .lineTo(startX + driverTable.headers.length * driverColumnWidth, driverStartY)
+    .stroke();
+
+// Calculate the maxHeight before you start drawing column lines
+let maxHeight = 0; // Default value
+driverTable.rows.forEach((row) => {
+    row.forEach((cell, i) => {
+        const cellHeight = doc.heightOfString(cell || '', { width: driverColumnWidth });
+        maxHeight = Math.max(maxHeight, cellHeight);
+    });
+});
+
+// Now draw the rows and columns
+driverTable.rows.forEach((row) => {
+    row.forEach((cell, i) => {
+        doc.text(cell || '', startX + i * driverColumnWidth, driverStartY, { width: driverColumnWidth, align: 'center' });
+    });
+
+    // Move down by the max height of the row
+    driverStartY += maxHeight;
+
+    // Draw row lines for driver
+    doc.moveTo(startX, driverStartY - maxHeight)
+        .lineTo(startX + driverTable.headers.length * driverColumnWidth, driverStartY - maxHeight)
+        .stroke();
+
+    // Draw an additional row line after each driver row
+    doc.moveTo(startX, driverStartY)
+        .lineTo(startX + driverTable.headers.length * driverColumnWidth, driverStartY)
+        .stroke();
+});
+
+// Draw column lines for driver
+driverTable.headers.forEach((header, i) => {
+    doc.moveTo(startX + i * driverColumnWidth, driverStartY - (driverTable.rows.length * maxHeight))
+        .lineTo(startX + i * driverColumnWidth, driverStartY)
+        .stroke();
+});
+
+
+// Draw right border of the table for driver
+doc.moveTo(startX + driverTable.headers.length * driverColumnWidth, doc.y - (driverTable.rows.length * maxHeight + maxHeight))
+    .lineTo(startX + driverTable.headers.length * driverColumnWidth, driverStartY - maxHeight)
+    .stroke();
+
+// Draw bottom border of the table for driver
+doc.moveTo(startX, driverStartY - maxHeight)
+    .lineTo(startX + driverTable.headers.length * driverColumnWidth, driverStartY - maxHeight)
+    .stroke();
+
+// Draw bottom enclosing line for driver
+doc.moveTo(startX, driverStartY - maxHeight)
+    .lineTo(startX + driverTable.headers.length * driverColumnWidth, driverStartY - maxHeight)
+    .stroke();
+
     
             // Passengers Table
             const passengersColumnWidth = (pageWidth1 - 2 * margin) / 3; // Adjusting for 3 columns
