@@ -31,10 +31,9 @@ const generatePDFBuffer = async (form) => {
         doc.rect(margin, margin, pageWidth - 2 * margin, pageHeight - 2 * margin).stroke();
 
         // Generate QR code and add it on the left side of the image
-        QRCode.toDataURL(`https://apii-cyan.vercel.app/api/forms/${form._id}/pdf`, async (err, url) => {
+        QRCode.toDataURL(`http://localhost:5000/api/forms/${form._id}/pdf`, async (err, url) => {
             if (err) return reject(err);
     
-            
             const qrWidth = 70;
             const qrHeight = 70;
             const qrX = margin + 450; // Adjust for margin
@@ -245,6 +244,29 @@ const driverTable = {
 
 // Draw table rows for driver
 let driverStartY = doc.y;
+// Function to calculate the height of a row based on the text content
+function calculateRowHeight(row) {
+    let maxHeight = 0;
+
+    // Loop through each cell in the row and calculate its height
+    row.forEach(cell => {
+        const cellHeight = doc.heightOfString(cell, { width: driverColumnWidth }); // or passengersColumnWidth depending on context
+        if (cellHeight > maxHeight) {
+            maxHeight = cellHeight;
+        }
+    });
+
+    return maxHeight;
+}
+
+let maxHeight = 0;
+driverTable.rows.forEach(row => {
+    // Assuming you have a method to calculate the height of a row
+    const rowHeight = calculateRowHeight(row);
+    if (rowHeight > maxHeight) {
+        maxHeight = rowHeight;
+    }
+});
 
 // Draw top enclosing line for driver table
 doc.moveTo(startX, driverStartY)
@@ -252,18 +274,21 @@ doc.moveTo(startX, driverStartY)
     .stroke();
 
 // Calculate the maxHeight before you start drawing column lines
-let maxHeight = 0; // Default value
 driverTable.rows.forEach((row) => {
-    row.forEach((cell, i) => {
-        const cellHeight = doc.heightOfString(cell || '', { width: driverColumnWidth });
-        maxHeight = Math.max(maxHeight, cellHeight);
-    });
-});
+    // Calculate the maximum height for the row
+    const rowHeights = row.map((cell) => doc.heightOfString(cell || '', { width: driverColumnWidth }));
+    const maxHeight = Math.max(...rowHeights);
 
-// Now draw the rows and columns
-driverTable.rows.forEach((row) => {
+    // Draw the row content, vertically centering the text
     row.forEach((cell, i) => {
-        doc.text(cell || '', startX + i * driverColumnWidth, driverStartY, { width: driverColumnWidth, align: 'center' });
+        // Calculate the height of the current cell
+        const cellHeight = doc.heightOfString(cell || '', { width: driverColumnWidth });
+        
+        // Calculate the amount of vertical offset needed to center the cell's text
+        const verticalOffset = (maxHeight - cellHeight) / 2;
+
+        // Draw the cell's text with the vertical offset applied
+        doc.text(cell || '', startX + i * driverColumnWidth, driverStartY + verticalOffset, { width: driverColumnWidth, align: 'center' });
     });
 
     // Move down by the max height of the row
@@ -287,7 +312,6 @@ driverTable.headers.forEach((header, i) => {
         .stroke();
 });
 
-
 // Draw right border of the table for driver
 doc.moveTo(startX + driverTable.headers.length * driverColumnWidth, doc.y - (driverTable.rows.length * maxHeight + maxHeight))
     .lineTo(startX + driverTable.headers.length * driverColumnWidth, driverStartY - maxHeight)
@@ -302,6 +326,7 @@ doc.moveTo(startX, driverStartY - maxHeight)
 doc.moveTo(startX, driverStartY - maxHeight)
     .lineTo(startX + driverTable.headers.length * driverColumnWidth, driverStartY - maxHeight)
     .stroke();
+
 
     
             // Passengers Table
