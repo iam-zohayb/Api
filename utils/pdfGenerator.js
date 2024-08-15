@@ -34,6 +34,7 @@ const generatePDFBuffer = async (form) => {
         QRCode.toDataURL(`https://apii-cyan.vercel.app/api/forms/${form._id}/pdf`, async (err, url) => {
             if (err) return reject(err);
     
+            
             const qrWidth = 70;
             const qrHeight = 70;
             const qrX = margin + 450; // Adjust for margin
