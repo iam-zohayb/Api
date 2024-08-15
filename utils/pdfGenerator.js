@@ -29,12 +29,12 @@ const generatePDFBuffer = async (form) => {
     
         // Draw border
         doc.rect(margin, margin, pageWidth - 2 * margin, pageHeight - 2 * margin).stroke();
-
+const url='https://apii-cyan.vercel.app';
         // Generate QR code and add it on the left side of the image
-        QRCode.toDataURL(`https://apii-cyan.vercel.app/api/forms/${form._id}/pdf`, async (err, url) => {
+        QRCode.toDataURL(`${url}/api/forms/${form._id}/pdf`, async (err, url) => {
             if (err) return reject(err);
     
-            
+
             const qrWidth = 70;
             const qrHeight = 70;
             const qrX = margin + 450; // Adjust for margin
