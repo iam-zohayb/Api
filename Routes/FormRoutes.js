@@ -14,7 +14,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.get('/', async (req, res) => {
+router.get('/get', async (req, res) => {
   try {
     const forms = await Form.find();
     res.status(200).json(forms);
@@ -114,12 +114,13 @@ router.put('/:statementNo', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+// Assuming Express.js backend
 router.put('/update-driver/:iqamaNo', async (req, res) => {
   const { iqamaNo } = req.params;
   const updatedDriverDetails = req.body;
 
   try {
-   
+    // Update all forms where the driver with matching iqamaNo exists
     await Form.updateMany(
       { 'formData.السائق_هوية_رقم': iqamaNo },
       { $set: { 
@@ -137,4 +138,21 @@ router.put('/update-driver/:iqamaNo', async (req, res) => {
     res.status(500).send('Error updating forms');
   }
 });
+
+
+// Add this route to your FormRoutes.js
+
+
+// Example Node.js with Express route
+router.get('/', async (req, res) => {
+  try {
+    const latestForm = await Form.findOne().sort({ 'formData.الكشف_رقم': -1 }).exec();
+    const nextStatementNo = latestForm ? parseInt(latestForm.formData.الكشف_رقم) + 1 : 1;
+    res.json({ nextStatementNo });
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching latest statement number' });
+  }
+});
+
+
 module.exports = router;
