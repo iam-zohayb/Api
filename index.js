@@ -10,7 +10,7 @@ const authRoutes = require('./Routes/authRoutes');
 
 const app = express();
 const PORT =  5000;
-const MONGODB_URI = 'mongodb+srv://Zohaib:Zohaib@cluster1.94ajelp.mongodb.net/';
+const MONGODB_URI = 'mongodb+srv://Zohaib:Zohaib@cluster0.v7oju4g.mongodb.net/';
 
 
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
