@@ -12,6 +12,7 @@ const app = express();
 const PORT =  5000;
 const MONGODB_URI = 'mongodb+srv://Zohaib:Zohaib@cluster1.94ajelp.mongodb.net/';
 
+
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.log(err));
