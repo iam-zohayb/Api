@@ -29,12 +29,11 @@ const generatePDFBuffer = async (form) => {
     
         // Draw border
         doc.rect(margin, margin, pageWidth - 2 * margin, pageHeight - 2 * margin).stroke();
-const url='https://apii-cyan.vercel.app';
+
         // Generate QR code and add it on the left side of the image
-        QRCode.toDataURL(`${url}/api/forms/${form._id}/pdf`, async (err, url) => {
+        QRCode.toDataURL(`https://apii-cyan.vercel.app/api/forms/${form._id}/pdf`, async (err, url) => {
             if (err) return reject(err);
     
-
             const qrWidth = 70;
             const qrHeight = 70;
             const qrX = margin + 450; // Adjust for margin
@@ -119,7 +118,7 @@ const url='https://apii-cyan.vercel.app';
             // Adjust Y position to avoid border
             doc.image(url, qrX, qrY + borderThickness, { width: qrWidth, height: qrHeight });
 
-            doc.moveDown(6);
+            doc.moveDown(8);
     
             // Add form data with headings and styling
             const fields = {
@@ -138,196 +137,166 @@ const url='https://apii-cyan.vercel.app';
                 'إلى ': form.formData.إلى|| '      '
             };
             const driverFields = {
-                'اسم السائق ': form.formData.السائق_اسم || '        ',
-                'جنسية السائق ': form.formData.السائق_جنسية || '        ',
-                'جوال السائق ': form.formData.السائق_جوال || '       ',
-                'رقم هوية السائق ': form.formData.السائق_هوية_رقم || '       ',
-                'رقم اللوحة ': form.formData.اللوحة_رقم || '        ',
-                'رقم المركبة ': form.formData.المركبة_رقم || '       ',
-                'اسم شركة النقل ': form.formData.شركة_النقل_اسم || '      '
+                '  ':   '        ',
+         
             };
-    
-            // Combine fields for the table
-            const allFields = { ...fields, ...driverFields };
-    
-            const fieldKeys = Object.keys(fields);
-            // Adjust the column width for the "تفاصيل كشف التفويج" table
-            const columnWidth = (pageWidth1 - 2 * margin) / 2; // Adjusting for 2 columns
-    
-            // Add the heading "تفاصيل كشف التفويج" centered
-            // Define the table structure without headers
-            const table = {
-                rows: fieldKeys.map((key) => [key, allFields[key]]), // Each row contains key-value pairs
-            };
-            
-            // Define the number of columns (2 in this case for key-value pairs)
-            const numberOfColumns = 2;
+            const startX = margin; 
+            let startY = doc.y + 40;
+          // Combine fields for the table
+const allFields = { ...fields, ...driverFields };
 
-            // Draw table rows
-            const startX = margin;
-            let startY = doc.y;
-            doc.moveDown(0.8);
-            //doc.fontSize(12).text('التفويج كشف تفاصيل', { align: 'center', width: pageWidth1 - 2 * margin+10 });
-            const Title = 'التفويج كشف تفاصيل';
+const fieldKeys = Object.keys(allFields); // Get keys from combined fields
+// Adjust the column width for the table with 4 columns
+const columnWidth = (pageWidth1 - 2 * margin) / 4; // Adjusting for 4 columns
+  // Draw bottom border of the table
+doc.moveTo(startX, startY - 20)
+.lineTo(startX + 4 * columnWidth, startY - 20)
+.stroke();
 
-            const TitleWidth = doc.widthOfString(Title);
-            const TitleX = (pageWidth1 - TitleWidth) / 2; // Center the title
-            
-            doc.fontSize(12).text(Title,TitleX, doc.y);
-            startY += 40; // Move down after the title
+// Add the heading "التفويج كشف تفاصيل" centered
+const Title = 'التفويج كشف تفاصيل';
+const TitleWidth = doc.widthOfString(Title);
+const TitleX = (pageWidth1 - TitleWidth) / 2; // Center the title
+doc.moveDown(1);
+doc.fontSize(12).text(Title, TitleX, doc.y);
+ // Move down after the title
 
-            table.rows.forEach((row) => {
-                row.forEach((cell, i) => {
-                    // Adjust the position to reverse columns
-                    const columnIndex = (i === 0) ? 1 : 0; // Swap the column index
-                    doc.text(cell || '', startX + columnIndex * columnWidth, startY, { width: columnWidth, align: 'center' });
-                });
-                startY += 20; // Adjust for row height
+// Iterate through fields in pairs for 4-column layout
+for (let i = 0; i < fieldKeys.length; i += 2) {
+    const field1 = fieldKeys[i];
+    const value1 = allFields[field1] || '';
 
-                // Draw row lines
-                doc.moveTo(startX, startY - 20)
-                    .lineTo(startX + numberOfColumns * columnWidth, startY - 20)
-                    .stroke();
+    const field2 = fieldKeys[i + 1];
+    const value2 = field2 ? allFields[field2] || '' : ''; // Check if field2 exists
+// Initialize startX
 
-                // Draw an additional row line after each row
-                doc.moveTo(startX, startY)
-                    .lineTo(startX + numberOfColumns * columnWidth, startY)
-                    .stroke();
-            });
 
-            // Draw column lines for the rows
-            for (let i = 1; i < numberOfColumns; i++) {
-                doc.moveTo(startX + i * columnWidth, doc.y - (table.rows.length * 20))
-                    .lineTo(startX + i * columnWidth, startY)
-                    .stroke();
-            }
 
-            // Draw right border of the table
-            doc.moveTo(startX + numberOfColumns * columnWidth, doc.y - (table.rows.length * 20 + 20))
-                .lineTo(startX + numberOfColumns * columnWidth, startY)
-                .stroke();
 
-            // Draw bottom border of the table
-            doc.moveTo(startX, startY - 20)
-                .lineTo(startX + numberOfColumns * columnWidth, startY - 20)
-                .stroke();
+    // Draw the row with 4 columns
+    doc.text(field1, startX, startY, { width: columnWidth, align: 'center' });
+    doc.text(value1, startX + columnWidth, startY, { width: columnWidth, align: 'center' });
 
-            // Draw bottom enclosing line
-            doc.moveTo(startX, startY - 20)
-                .lineTo(startX + numberOfColumns * columnWidth, startY - 20)
-                .stroke();
+    if (field2) {
+        doc.text(field2, startX + 2 * columnWidth, startY, { width: columnWidth, align: 'center' });
+        doc.text(value2, startX + 3 * columnWidth, startY, { width: columnWidth, align: 'center' });
+    }
 
-            // Driver Details
+    startY += 20; // Adjust for row height
+
+    // Draw row lines
+    doc.moveTo(startX, startY - 20)
+        .lineTo(startX + 4 * columnWidth, startY - 20)
+        .stroke();
+}
+
+// Draw column lines for the rows
+for (let i = 1; i < 4; i++) {
+    doc.moveTo(startX + i * columnWidth, doc.y - (Math.ceil(fieldKeys.length / 2) * 20))
+        .lineTo(startX + i * columnWidth, startY)
+        .stroke();
+}
+
+// Draw right border of the table
+doc.moveTo(startX + 4 * columnWidth, doc.y - (Math.ceil(fieldKeys.length / 2) * 20))
+    .lineTo(startX + 4 * columnWidth, startY)
+    .stroke();
+// Draw the bottom row line at the final startY
+doc.moveTo(startX, startY)
+   .lineTo(startX + 4 * columnWidth, startY)
+   .stroke();
+
             const driverTitle = 'السائق تفاصيل';
 
             const driverTitleWidth = doc.widthOfString(driverTitle);
             const driverTitleX = (pageWidth1 - driverTitleWidth) / 2; // Center the title
-            
+                        
             doc.fontSize(12).text(driverTitle, driverTitleX, doc.y);
-    
-       // Define a smaller column width for the driver table
-const driverColumnWidth = (pageWidth1 - 2 * margin) / 7; // Adjusting for 7 columns
-
-const driverTable = {
-    headers: ['النقل شركة اسم ', 'المركبة رقم ', 'اللوحة رقم ', 'السائق هوية رقم ', 'السائق جوال ', 'السائق جنسية ', 'السائق اسم '],
-    rows: [
-        [
-            form.formData.شركة_النقل_اسم || '      ', 
-            form.formData.المركبة_رقم || '       ',    
-            form.formData.اللوحة_رقم || '        ',    
-            form.formData.السائق_هوية_رقم || '        ', 
-            form.formData.السائق_جوال || '        ',     
-            form.formData.السائق_جنسية || '        ',    
-            form.formData.السائق_اسم || '         '      
-        ]
-    ],
-};
-
-// Draw table rows for driver
-let driverStartY = doc.y;
-// Function to calculate the height of a row based on the text content
-function calculateRowHeight(row) {
-    let maxHeight = 0;
-
-    // Loop through each cell in the row and calculate its height
-    row.forEach(cell => {
-        const cellHeight = doc.heightOfString(cell, { width: driverColumnWidth }); // or passengersColumnWidth depending on context
-        if (cellHeight > maxHeight) {
-            maxHeight = cellHeight;
-        }
-    });
-
-    return maxHeight;
-}
-
-let maxHeight = 0;
-driverTable.rows.forEach(row => {
-    // Assuming you have a method to calculate the height of a row
-    const rowHeight = calculateRowHeight(row);
-    if (rowHeight > maxHeight) {
-        maxHeight = rowHeight;
-    }
-});
-
-// Draw top enclosing line for driver table
-doc.moveTo(startX, driverStartY)
-    .lineTo(startX + driverTable.headers.length * driverColumnWidth, driverStartY)
-    .stroke();
-
-// Calculate the maxHeight before you start drawing column lines
-driverTable.rows.forEach((row) => {
-    // Calculate the maximum height for the row
-    const rowHeights = row.map((cell) => doc.heightOfString(cell || '', { width: driverColumnWidth }));
-    const maxHeight = Math.max(...rowHeights);
-
-    // Draw the row content, vertically centering the text
-    row.forEach((cell, i) => {
-        // Calculate the height of the current cell
-        const cellHeight = doc.heightOfString(cell || '', { width: driverColumnWidth });
-        
-        // Calculate the amount of vertical offset needed to center the cell's text
-        const verticalOffset = (maxHeight - cellHeight) / 2;
-
-        // Draw the cell's text with the vertical offset applied
-        doc.text(cell || '', startX + i * driverColumnWidth, driverStartY + verticalOffset, { width: driverColumnWidth, align: 'center' });
-    });
-
-    // Move down by the max height of the row
-    driverStartY += maxHeight;
-
-    // Draw row lines for driver
-    doc.moveTo(startX, driverStartY - maxHeight)
-        .lineTo(startX + driverTable.headers.length * driverColumnWidth, driverStartY - maxHeight)
-        .stroke();
-
-    // Draw an additional row line after each driver row
-    doc.moveTo(startX, driverStartY)
-        .lineTo(startX + driverTable.headers.length * driverColumnWidth, driverStartY)
-        .stroke();
-});
-
-// Draw column lines for driver
-driverTable.headers.forEach((header, i) => {
-    doc.moveTo(startX + i * driverColumnWidth, driverStartY - (driverTable.rows.length * maxHeight))
-        .lineTo(startX + i * driverColumnWidth, driverStartY)
-        .stroke();
-});
-
-// Draw right border of the table for driver
-doc.moveTo(startX + driverTable.headers.length * driverColumnWidth, doc.y - (driverTable.rows.length * maxHeight + maxHeight))
-    .lineTo(startX + driverTable.headers.length * driverColumnWidth, driverStartY - maxHeight)
-    .stroke();
-
-// Draw bottom border of the table for driver
-doc.moveTo(startX, driverStartY - maxHeight)
-    .lineTo(startX + driverTable.headers.length * driverColumnWidth, driverStartY - maxHeight)
-    .stroke();
-
-// Draw bottom enclosing line for driver
-doc.moveTo(startX, driverStartY - maxHeight)
-    .lineTo(startX + driverTable.headers.length * driverColumnWidth, driverStartY - maxHeight)
-    .stroke();
-
+            
+            // Define a smaller column width for the driver table
+            const driverColumnWidth = (pageWidth1 - 2 * margin) / 7; // Adjusting for 7 columns
+            
+            const driverTable = {
+                headers: ['النقل شركة اسم ', 'المركبة رقم ', 'اللوحة رقم ', 'السائق هوية رقم ', 'السائق جوال ', 'السائق جنسية ', 'السائق اسم '],
+                rows: [
+                    [
+                        form.formData.شركة_النقل_اسم || '      ', 
+                        form.formData.المركبة_رقم || '       ',    
+                        form.formData.اللوحة_رقم || '        ',    
+                        form.formData.السائق_هوية_رقم || '        ', 
+                        form.formData.السائق_جوال || '        ',     
+                        form.formData.السائق_جنسية || '        ',    
+                        form.formData.السائق_اسم || '         '      
+                    ]
+                ],
+            };
+            
+            // Draw headers and column lines for the headers
+            let driverStartY = doc.y;
+            
+            // Draw headers text and vertical column lines for headers
+            driverTable.headers.forEach((header, i) => {
+                doc.text(header, startX + i * driverColumnWidth, driverStartY, { width: driverColumnWidth, align: 'center' });
+            
+                doc.moveTo(startX, driverStartY)
+                .lineTo(startX + driverTable.headers.length * driverColumnWidth, driverStartY)
+                .stroke();
+                // Draw vertical column lines for headers
+                doc.moveTo(startX + i * driverColumnWidth, driverStartY)
+                   .lineTo(startX + i * driverColumnWidth, driverStartY + doc.heightOfString(header, { width: driverColumnWidth }))
+                   .stroke();
+            });
+            
+            // Draw the rightmost vertical line for the last header
+            doc.moveTo(startX + driverTable.headers.length * driverColumnWidth, driverStartY)
+               .lineTo(startX + driverTable.headers.length * driverColumnWidth, driverStartY + doc.heightOfString(driverTable.headers[0], { width: driverColumnWidth }))
+               .stroke();
+            
+            // Move the startY position down for rows after headers
+            driverStartY += doc.heightOfString(driverTable.headers[0], { width: driverColumnWidth });
+            
+            // Draw bottom enclosing line for the headers
+            doc.moveTo(startX, driverStartY)
+                .lineTo(startX + driverTable.headers.length * driverColumnWidth, driverStartY)
+                .stroke();
+            
+            // Calculate the maxHeight for the rows outside of the drawing loop
+            let maxHeight = 0;
+            driverTable.rows.forEach(row => {
+                const rowHeights = row.map((cell) => doc.heightOfString(cell || '', { width: driverColumnWidth }));
+                const rowMaxHeight = Math.max(...rowHeights);
+            
+                if (rowMaxHeight > maxHeight) {
+                    maxHeight = rowMaxHeight;
+                }
+            });
+            
+            // Draw rows and row lines
+            driverTable.rows.forEach((row) => {
+                row.forEach((cell, i) => {
+                    const cellHeight = doc.heightOfString(cell || '', { width: driverColumnWidth });
+                    const verticalOffset = (maxHeight - cellHeight) / 2;
+            
+                    // Draw cell text
+                    doc.text(cell || '', startX + i * driverColumnWidth, driverStartY + verticalOffset, { width: driverColumnWidth, align: 'center' });
+                });
+            
+                driverStartY += maxHeight;
+            
+                // Draw the row lines
+                doc.moveTo(startX, driverStartY)
+                    .lineTo(startX + driverTable.headers.length * driverColumnWidth, driverStartY)
+                    .stroke();
+            });
+            
+            // Draw column lines for driver table using the calculated maxHeight
+            driverTable.headers.forEach((header, i) => {
+                doc.moveTo(startX + i * driverColumnWidth, driverStartY - (driverTable.rows.length * maxHeight))
+                    .lineTo(startX + i * driverColumnWidth, driverStartY)
+                    .stroke();
+            });
+            
+            
 
     
             // Passengers Table
