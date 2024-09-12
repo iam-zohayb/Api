@@ -147,7 +147,7 @@ router.put('/update-driver/:iqamaNo', async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const latestForm = await Form.findOne().sort({ 'formData.الكشف_رقم': -1 }).exec();
-    const nextStatementNo = latestForm ? parseInt(latestForm.formData.الكشف_رقم)  : 1;
+    const nextStatementNo = latestForm ? parseInt(latestForm.formData.الكشف_رقم) + 1 : 1;
     res.json({ nextStatementNo });
   } catch (error) {
     res.status(500).json({ error: 'Error fetching latest statement number' });
