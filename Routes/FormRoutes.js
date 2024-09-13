@@ -146,22 +146,13 @@ router.put('/update-driver/:iqamaNo', async (req, res) => {
 // Example Node.js with Express route
 router.get('/', async (req, res) => {
   try {
-    // Find the latest form and sort by الكشف_رقم in descending order
-    const latestForm = await Form.findOne().sort({ 'formData.الكشف_رقم': 1 }).exec();
-
-    // Get the الكشف_رقم or default to 0 if no latest form is found
-    const latestStatementNo = latestForm ? latestForm.formData.الكشف_رقم : 1;
-
-    // Increment the number
-    const nextStatementNo = latestStatementNo;
-
-    // Respond with the next statement number
+    const latestForm = await Form.findOne().sort({ 'formData.الكشف_رقم': -1 }).exec();
+    const nextStatementNo = latestForm ? parseInt(latestForm.formData.الكشف_رقم) + 1 : 1;
     res.json({ nextStatementNo });
   } catch (error) {
     res.status(500).json({ error: 'Error fetching latest statement number' });
   }
 });
-
 
 
 module.exports = router;
