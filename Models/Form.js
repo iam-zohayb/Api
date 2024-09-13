@@ -6,7 +6,7 @@ const formSchema = new mongoose.Schema({
   formData: {
     تاريخ: String,
     الكشف_تاريخ: String,
-    الكشف_رقم:{ type: Number,  unique: true,required:true },
+    الكشف_رقم:{ type: String ,  unique: true,required:true },
     شركة_العمرة_اسم: String,
     شركة_العمرة_رقم: String,
     الجنسية: String,
