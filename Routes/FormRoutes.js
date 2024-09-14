@@ -144,15 +144,19 @@ router.put('/update-driver/:iqamaNo', async (req, res) => {
 
 
 // Example Node.js with Express route
-router.get('/', async (req, res) => {
+router.delete('/:statementNo', async (req, res) => {
   try {
-    const latestForm = await Form.findOne().sort({ 'formData.الكشف_رقم': -1 }).exec();
-    const nextStatementNo = latestForm ? parseInt(latestForm.formData.الكشف_رقم) + 1 : 1;
-    res.json({ nextStatementNo });
+    const statementNo = req.params.statementNo;
+    const deletedForm = await Form.findOneAndDelete({ 'formData.الكشف_رقم': statementNo });
+
+    if (!deletedForm) {
+      return res.status(404).json({ message: 'Form not found' });
+    }
+
+    res.status(200).json({ message: 'Form deleted successfully', deletedForm });
   } catch (error) {
-    res.status(500).json({ error: 'Error fetching latest statement number' });
+    res.status(500).json({ message: error.message });
   }
 });
-
 
 module.exports = router;
