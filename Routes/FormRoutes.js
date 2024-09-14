@@ -141,7 +141,18 @@ router.put('/update-driver/:iqamaNo', async (req, res) => {
 
 
 // Add this route to your FormRoutes.js
-
+router.get('/', async (req, res) => {
+  try {
+    // Get the total count of forms in the database
+    const totalFormsCount = await Form.countDocuments();
+    // The next statement number will be the total count plus 1
+    const nextStatementNo = totalFormsCount + 1;
+    
+    res.json({ nextStatementNo });
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching the statement number count' });
+  }
+});
 
 // Example Node.js with Express route
 router.delete('/:statementNo', async (req, res) => {
