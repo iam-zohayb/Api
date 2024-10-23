@@ -1,5 +1,5 @@
 // Backend/controllers/authController.js
-const User = require('../Models/User');
+const User = require('../models/User');
 
 exports.signup = async (req, res) => {
   try {
@@ -14,19 +14,22 @@ exports.signup = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-  
     const existingUser = await User.findOne({ email });
     if (!existingUser) {
-      return res.json({ success: false, message: "User does not exist" });
-    }
-  
-    if (existingUser.password !== password) {
-      return res.json({ success: false, message: "Incorrect password" });
+      return res.json({ success: false, message: 'User does not exist' });
     }
 
-    return res.json({ success: true, message: "Login successful", user: existingUser });
+    if (!existingUser.isActive) {
+      return res.json({ success: false, message: 'User is not allowed to log in' });
+    }
+
+    if (existingUser.password !== password) {
+      return res.json({ success: false, message: 'Incorrect password' });
+    }
+
+    return res.json({ success: true, message: 'Login successful', user: existingUser });
   } catch (err) {
- 
-    return res.status(500).json({ success: false, message: "Internal server error" });
+    return res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
+
