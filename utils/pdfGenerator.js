@@ -129,10 +129,11 @@ const generatePDFBuffer = async (form) => {
                 'الجنسية ': form.formData.الجنسية|| '      ',
                 'المعتمرين عدد ': form.formData.المعتمرين_عدد|| '      ',
                 'الرحلة رقم ': form.formData.الرحلة_رقم|| '      ',
-                'من ': form.formData.من|| '      ',
+              
                 'الرحلة تاريخ ': form.formData.الرحلة_تاريخ|| '      ',
                 'الناقل ': form.formData.الناقل|| '      ',
                 'المنفذ ': form.formData.المنفذ|| '      ',
+                'من ': form.formData.من|| '      ',
                 'الرحلة وقت ': form.formData.الرحلة_وقت|| '      ',
                 'إلى ': form.formData.إلى|| '      '
             };
