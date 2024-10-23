@@ -1,5 +1,5 @@
 // Backend/controllers/userController.js
-const User = require('../models/User');
+const User = require('../Models/User');
 
 // Backend/controllers/userController.js
 
